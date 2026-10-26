@@ -1,15 +1,16 @@
-// Licensed under the Dartastic Pro Software License Agreement.
+// Licensed under the Apache License, Version 2.0
 // Copyright 2025-2026 Mindful Software LLC d/b/a Dartastic.io, All rights reserved.
 
-import 'package:dartastic_opentelemetry/dartastic_opentelemetry.dart';
+import 'package:dartastic_opentelemetry_api/dartastic_opentelemetry_api.dart';
 
 import 'otel_dynamics_365_suppression.dart';
 
 const _tracerName = 'dartastic_otel_libs_dynamics_365';
 
-Tracer _tracer() => OTel.tracerProvider().getTracer(_tracerName);
+APITracer _tracer() => OTelAPI.tracerProvider().getTracer(_tracerName);
 
 class Dynamics365Result {
+  /// Creates a result.
   const Dynamics365Result({
     this.surface,
     this.orgUrl,
@@ -105,8 +106,13 @@ class Dynamics365Result {
   final int? statusCode;
 }
 
+/// What a traced call returned: the value for the caller plus fields
+/// recorded on the span.
 class Dynamics365CallResult<T> {
+  /// Creates a call result.
   const Dynamics365CallResult({required this.value, this.result});
+
+  /// The value returned to the caller.
   final T value;
   final Dynamics365Result? result;
 }
@@ -146,7 +152,7 @@ Future<T> tracedDynamics365<T>({
   final span = _tracer().startSpan(
     'dynamics_365 $operation',
     kind: SpanKind.client,
-    attributes: OTel.attributesFromMap(m),
+    attributes: OTelAPI.attributesFromMap(m),
   );
   try {
     final r = await invoke();
@@ -154,106 +160,108 @@ Future<T> tracedDynamics365<T>({
       final res = r.result!;
       final extras = <Attribute<Object>>[];
       if (res.surface != null) {
-        extras.add(OTel.attributeString('dynamics_365.surface', res.surface!));
+        extras
+            .add(OTelAPI.attributeString('dynamics_365.surface', res.surface!));
       }
       if (res.orgUrl != null) {
-        extras.add(OTel.attributeString('dynamics_365.org.url', res.orgUrl!));
+        extras
+            .add(OTelAPI.attributeString('dynamics_365.org.url', res.orgUrl!));
       }
       if (res.tenantId != null) {
-        extras.add(OTel.attributeString(
+        extras.add(OTelAPI.attributeString(
           'dynamics_365.tenant.id',
           res.tenantId!,
         ));
       }
       if (res.environment != null) {
-        extras.add(OTel.attributeString(
+        extras.add(OTelAPI.attributeString(
           'dynamics_365.environment',
           res.environment!,
         ));
       }
       if (res.appModule != null) {
-        extras.add(OTel.attributeString(
+        extras.add(OTelAPI.attributeString(
           'dynamics_365.app_module',
           res.appModule!,
         ));
       }
       if (res.entitySetName != null) {
-        extras.add(OTel.attributeString(
+        extras.add(OTelAPI.attributeString(
           'dynamics_365.entity.set_name',
           res.entitySetName!,
         ));
       }
       if (res.entityLogicalName != null) {
-        extras.add(OTel.attributeString(
+        extras.add(OTelAPI.attributeString(
           'dynamics_365.entity.logical_name',
           res.entityLogicalName!,
         ));
       }
       if (res.recordId != null) {
-        extras.add(OTel.attributeString(
+        extras.add(OTelAPI.attributeString(
           'dynamics_365.record.id',
           res.recordId!,
         ));
       }
       if (res.action != null) {
-        extras.add(OTel.attributeString('dynamics_365.action', res.action!));
+        extras.add(OTelAPI.attributeString('dynamics_365.action', res.action!));
       }
       if (res.batchRequestCount != null) {
-        extras.add(OTel.attributeInt(
+        extras.add(OTelAPI.attributeInt(
           'dynamics_365.batch.request_count',
           res.batchRequestCount!,
         ));
       }
       if (res.batchChangesetCount != null) {
-        extras.add(OTel.attributeInt(
+        extras.add(OTelAPI.attributeInt(
           'dynamics_365.batch.changeset_count',
           res.batchChangesetCount!,
         ));
       }
       if (res.fetchXml != null) {
-        extras.add(OTel.attributeInt(
+        extras.add(OTelAPI.attributeInt(
           'dynamics_365.fetch_xml.length',
           res.fetchXml!,
         ));
       }
       if (res.queryPageSize != null) {
-        extras.add(OTel.attributeInt(
+        extras.add(OTelAPI.attributeInt(
           'dynamics_365.query.page_size',
           res.queryPageSize!,
         ));
       }
       if (res.queryReturnedCount != null) {
-        extras.add(OTel.attributeInt(
+        extras.add(OTelAPI.attributeInt(
           'dynamics_365.query.returned_count',
           res.queryReturnedCount!,
         ));
       }
       if (res.fetchedRowCount != null) {
-        extras.add(OTel.attributeInt(
+        extras.add(OTelAPI.attributeInt(
           'dynamics_365.fetched_row_count',
           res.fetchedRowCount!,
         ));
       }
       if (res.affectedRowCount != null) {
-        extras.add(OTel.attributeInt(
+        extras.add(OTelAPI.attributeInt(
           'dynamics_365.affected_row_count',
           res.affectedRowCount!,
         ));
       }
       if (res.solutionUniqueName != null) {
-        extras.add(OTel.attributeString(
+        extras.add(OTelAPI.attributeString(
           'dynamics_365.solution.unique_name',
           res.solutionUniqueName!,
         ));
       }
       if (res.workflowName != null) {
-        extras.add(OTel.attributeString(
+        extras.add(OTelAPI.attributeString(
           'dynamics_365.workflow.name',
           res.workflowName!,
         ));
       }
       if (res.workflowStage != null) {
-        extras.add(OTel.attributeString(
+        extras.add(OTelAPI.attributeString(
           'dynamics_365.workflow.stage',
           res.workflowStage!,
         ));
@@ -262,32 +270,32 @@ Future<T> tracedDynamics365<T>({
         }
       }
       if (res.pluginStage != null) {
-        extras.add(OTel.attributeString(
+        extras.add(OTelAPI.attributeString(
           'dynamics_365.plugin.stage',
           res.pluginStage!,
         ));
       }
       if (res.businessUnit != null) {
-        extras.add(OTel.attributeString(
+        extras.add(OTelAPI.attributeString(
           'dynamics_365.business_unit',
           res.businessUnit!,
         ));
       }
       if (res.errorCode != null) {
-        extras.add(OTel.attributeString(
+        extras.add(OTelAPI.attributeString(
           'dynamics_365.error.code',
           res.errorCode!,
         ));
         span.setStatus(SpanStatusCode.Error, 'D365 ${res.errorCode}');
       }
       if (res.errorMessage != null) {
-        extras.add(OTel.attributeString(
+        extras.add(OTelAPI.attributeString(
           'dynamics_365.error.message',
           res.errorMessage!,
         ));
       }
       if (res.statusCode != null) {
-        extras.add(OTel.attributeInt(
+        extras.add(OTelAPI.attributeInt(
           'http.response.status_code',
           res.statusCode!,
         ));
@@ -295,13 +303,13 @@ Future<T> tracedDynamics365<T>({
           span.setStatus(SpanStatusCode.Error, 'D365 HTTP ${res.statusCode}');
         }
       }
-      if (extras.isNotEmpty) span.addAttributes(OTel.attributes(extras));
+      if (extras.isNotEmpty) span.addAttributes(OTelAPI.attributes(extras));
     }
     return r.value;
   } catch (e, st) {
-    span.addAttributes(OTel.attributes([
-      OTel.attributeString(
-        ErrorResource.errorType.key,
+    span.addAttributes(OTelAPI.attributes([
+      OTelAPI.attributeString(
+        ErrorAttributes.errorType.key,
         e.runtimeType.toString(),
       ),
     ]));
